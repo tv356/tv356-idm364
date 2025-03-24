@@ -3,6 +3,7 @@
   import { browser } from '$app/environment';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
 
   let cart = [];
   onMount(() => {
@@ -30,6 +31,22 @@
   <title>Đê Mê - Artisan Natural Soap Collection</title>
   <meta name="description" content="Discover our handcrafted, natural soaps made with premium ingredients for gentle, nourishing skincare." />
 </svelte:head>
+
+<header>
+  <div class="logo">
+    <a href="/">Đê Mê</a>
+  </div>
+  
+  <nav>
+    <a href="/" class:active={$page.url.pathname === '/'}>Home</a>
+    <a href="/about" class:active={$page.url.pathname === '/about'}>About</a>
+    <a href="/products" class:active={$page.url.pathname === '/products'}>Products</a>
+  </nav>
+  
+  <div class="cart">
+    <a href="/order">🛒 Cart ({cart.length})</a>
+  </div>
+</header>
 
 <div class="home-container">
   <!-- Hero Section -->
@@ -141,12 +158,93 @@
   </section>
 </div>
 
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-logo">
+      <h3>Đê Mê</h3>
+      <p>Handcrafted with love since 2018</p>
+    </div>
+    
+    <div class="footer-nav">
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+      <a href="/products">Products</a>
+    </div>
+    
+    <div class="footer-social">
+      <div class="social-icons">
+        <a href="javascript:void(0)" aria-label="Instagram"><span class="icon">📷</span></a>
+        <a href="javascript:void(0)" aria-label="Facebook"><span class="icon">👍</span></a>
+        <a href="javascript:void(0)" aria-label="Pinterest"><span class="icon">📌</span></a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer-bottom">
+    <p class="copyright">&copy; 2025 Đê Mê. All rights reserved.</p>
+  </div>
+</footer>
+
 <style>
+  /* Header Styles */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+    position: static;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+
+  nav {
+    display: flex;
+    gap: 1rem;
+  }
+
+  header a {
+    text-decoration: none;
+    color: #4f9cba;
+    position: relative;
+    font-weight: 500;
+  }
+
+  .active {
+    font-weight: bold;
+  }
+
+  .logo a {
+    font-size: 1.5rem;
+    font-weight: bold;
+    font-family: 'Playfair Display', 'Poppins', sans-serif;
+    color: #4f9cba;
+  }
+
   /* Global Styles */
   .home-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
+  }
+
+  .section-heading {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .section-heading h2 {
+    font-family: 'Playfair Display', 'Poppins', sans-serif;
+    font-size: 2.2rem;
+    color: #4f9cba;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-heading p {
+    color: #666;
+    font-size: 1.1rem;
   }
 
   /* Hero Section */
@@ -155,6 +253,7 @@
     padding: 6rem 2rem;
     text-align: center;
     border-radius: 16px;
+    margin-top: 2rem;
     margin-bottom: 4rem;
     position: relative;
     overflow: hidden;
@@ -284,7 +383,7 @@
     object-position: center;
     max-height: 300px;
     transition: transform 0.3s ease;
-}
+  }
 
   .quick-add-btn {
     position: absolute;
@@ -298,6 +397,7 @@
     border-radius: 20px;
     opacity: 0;
     transition: opacity 0.3s ease;
+    cursor: pointer;
   }
 
   .product-card:hover .quick-add-btn {
@@ -362,6 +462,7 @@
     background-color: #f0f8fb;
     padding: 4rem 2rem;
     border-radius: 16px;
+    margin-bottom: 4rem;
   }
 
   .testimonials-grid {
@@ -382,6 +483,110 @@
     text-align: right;
     color: #4f9cba;
     font-weight: 500;
+  }
+
+  /* Footer */
+  .footer {
+    background-color: #f0f8fb;
+    padding: 4rem 2rem 1.5rem;
+    margin-top: 4rem;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .footer-logo h3 {
+    margin-bottom: 0.5rem;
+    font-family: 'Playfair Display', 'Poppins', sans-serif;
+    color: #4f9cba;
+    font-size: 1.4rem;
+    margin-top: 0;
+  }
+  
+  .footer-logo p {
+    margin: 0;
+    color: #666;
+  }
+  
+  .footer-nav {
+    display: flex;
+    gap: 2rem;
+  }
+  
+  .footer-nav a {
+    color: #4f9cba;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    position: relative;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+  }
+  
+  .footer-nav a:hover {
+    color: #3d7f9a;
+    text-decoration: none;
+  }
+  
+  .footer-nav a:hover::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #4f9cba;
+  }
+
+  .social-icons {
+    display: flex;
+    gap: 1.2rem;
+  }
+
+  .social-icons a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 3px 10px rgba(79, 156, 186, 0.1);
+    text-decoration: none;
+  }
+
+  .social-icons a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(79, 156, 186, 0.15);
+  }
+
+  .icon {
+    font-size: 1.2rem;
+  }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(79, 156, 186, 0.1);
+    font-size: 0.9rem;
+    color: #666;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .copyright {
+    text-align: center;
   }
 
   /* Responsive Adjustments */
@@ -414,6 +619,26 @@
 
     .hero-ctas {
       flex-direction: column;
+    }
+    
+    .footer-content {
+      flex-direction: column;
+      gap: 2rem;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .footer-bottom {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    header {
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem 0.5rem;
     }
   }
 </style>
