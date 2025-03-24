@@ -1,35 +1,41 @@
 <script>
-  import { products } from '$lib/products.js';
   import { browser } from '$app/environment';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
-
+  
+  export let data;
+  
   let cart = [];
+  let selectedColor = data.product?.colors?.[0] || '';
+  
   onMount(() => {
     if (browser) {
       cart = JSON.parse(localStorage.getItem('cart')) || [];
     }
+    
+    if (data.product?.colors?.length > 0) {
+      selectedColor = data.product.colors[0];
+    }
   });
 
-  function addToCart(product) {
-    cart = [...cart, product];
+  function addToCart() {
+    const productToAdd = { ...data.product };
+    cart = [...cart, productToAdd];
     if (browser) {
       localStorage.setItem('cart', JSON.stringify(cart));
+      alert('Product added to cart!');
     }
   }
 
   function viewCart() {
     goto('/order');
   }
-
-  // Featured products (top 3)
-  $: featuredProducts = products.slice(0, 3);
 </script>
 
 <svelte:head>
-  <title>Đê Mê - Artisan Natural Soap Collection</title>
-  <meta name="description" content="Discover our handcrafted, natural soaps made with premium ingredients for gentle, nourishing skincare." />
+  <title>{data.product ? data.product.name : 'Product'} - Đê Mê</title>
+  <meta name="description" content={data.product ? data.product.description : 'Product details'} />
 </svelte:head>
 
 <header>
@@ -48,114 +54,145 @@
   </div>
 </header>
 
-<div class="home-container">
-  <!-- Hero Section -->
-  <section class="hero-section">
-    <div class="hero-content">
-      <h1>Đê Mê Soap Artistry</h1>
-      <p class="hero-subtitle">Crafting Moments of Pure Sensory Delight</p>
-      <div class="hero-ctas">
-        <a href="#featured-products" class="primary-cta">Explore Collection</a>
-        <a href="/about" class="secondary-cta">Our Story</a>
-      </div>
+<div class="page-container">
+  {#if data.product}
+    <div class="breadcrumbs">
+      <a href="/">Home</a> &gt; 
+      <a href="/products">Products</a> &gt; 
+      <span>{data.product.name}</span>
     </div>
-  </section>
-
-  <!-- Ingredients Showcase -->
-  <section class="ingredients-section">
-    <div class="section-heading">
-      <h2>Our Signature Ingredients</h2>
-      <p>Carefully selected natural elements that transform your skincare routine</p>
-    </div>
-    <div class="ingredients-grid">
-      <div class="ingredient-card">
-        <div class="ingredient-icon">🌿</div>
-        <h3>Ginger</h3>
-        <p>Invigorating essence that enhances circulation and revitalizes skin</p>
+    
+    <div class="product-detail">
+      <div class="product-images">
+        <div class="main-image">
+          <img src={data.product.imageUrl} alt={data.product.name} />
+        </div>
       </div>
-      <div class="ingredient-card">
-        <div class="ingredient-icon">🍃</div>
-        <h3>Perilla</h3>
-        <p>Antioxidant-rich extract that protects and nourishes sensitive skin</p>
-      </div>
-      <div class="ingredient-card">
-        <div class="ingredient-icon">✨</div>
-        <h3>Sarsi Spice</h3>
-        <p>Exotic blend creating a soothing, aromatic sensory experience</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Featured Products -->
-  <section id="featured-products" class="featured-products-section">
-    <div class="section-heading">
-      <h2>Featured Soaps</h2>
-      <p>Discover our most beloved creations</p>
-    </div>
-    <div class="product-grid">
-      {#each featuredProducts as product}
-        <div class="product-card">
-          <div class="product-image">
-            <a href="/soap/{product.id}">
-              <img src={product.imageUrl} alt={product.name} />
-            </a>
-            <button 
-              class="quick-add-btn" 
-              on:click={() => addToCart(product)}
-            >
-              Quick Add +
-            </button>
-          </div>
-          <div class="product-details">
-            <h3>{product.name}</h3>
-            <div class="product-meta">
-              <span class="product-price">${product.price}</span>
-              <span class="product-size">{product.size}</span>
-            </div>
-            <div class="product-colors">
-              {#each product.colors as color}
-                <span 
-                  class="color-dot" 
-                  style="background-color: {color};"
-                ></span>
+      
+      <div class="product-info">
+        <h1>{data.product.name}</h1>
+        
+        <div class="product-price">
+          ${data.product.price.toFixed(2)}
+        </div>
+        
+        <div class="product-description">
+          <p>{data.product.description}</p>
+        </div>
+        
+        <div class="product-attributes">
+          <div class="product-colors">
+            <h3>Colors</h3>
+            <div class="color-options">
+              {#each data.product.colors as color}
+                <button 
+                  class="color-option" 
+                  class:selected={selectedColor === color}
+                  style="background-color: {color};" 
+                  on:click={() => selectedColor = color}
+                  aria-label={`Select ${color} color`}
+                ></button>
               {/each}
             </div>
           </div>
+          
+          <div class="product-size">
+            <h3>Size</h3>
+            <div class="size-badge">{data.product.size}</div>
+          </div>
         </div>
-      {/each}
+        
+        <div class="product-materials">
+          <h3>Materials</h3>
+          <ul>
+            {#each data.product.materials as material}
+              <li>{material}</li>
+            {/each}
+          </ul>
+        </div>
+        
+        <div class="product-care">
+          <h3>Care Instructions</h3>
+          <p>{data.product.careInstructions}</p>
+        </div>
+        
+        <div class="product-actions">
+          <button class="add-to-cart" on:click={addToCart}>
+            Add to Cart
+          </button>
+          <button class="view-cart" on:click={viewCart}>
+            View Cart
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="view-all-products">
-      <a href="/products" class="view-all-btn">View All Products</a>
+    
+    <div class="product-details-tabs">
+      <div class="tabs">
+        <button class="tab active">Description</button>
+        <button class="tab">Ingredients</button>
+        <button class="tab">Reviews</button>
+      </div>
+      
+      <div class="tab-content">
+        <div class="tab-panel active">
+          <h2>About {data.product.name}</h2>
+          <p>{data.product.description}</p>
+          <p>Our soaps are handcrafted with care using traditional cold-process methods. Each bar is unique and made with the finest natural ingredients to ensure a luxurious bathing experience.</p>
+          
+          <div class="features">
+            <div class="feature">
+              <div class="feature-icon">🌿</div>
+              <h4>Natural Ingredients</h4>
+              <p>Made with plant-based oils and botanicals</p>
+            </div>
+            
+            <div class="feature">
+              <div class="feature-icon">🧪</div>
+              <h4>No Harsh Chemicals</h4>
+              <p>Free from SLS, parabens, and synthetic fragrances</p>
+            </div>
+            
+            <div class="feature">
+              <div class="feature-icon">🌍</div>
+              <h4>Eco-Friendly</h4>
+              <p>Sustainable practices and minimal packaging</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </section>
-
-  <!-- Testimonials -->
-  <section class="testimonials-section">
-    <div class="section-heading">
+    
+    <div class="customer-testimonials">
       <h2>What Our Customers Say</h2>
-      <p>Real experiences from our soap enthusiasts</p>
+      <div class="testimonials-grid">
+        <div class="testimonial">
+          <div class="testimonial-content">
+            <p>"Absolutely love this soap! The scent is divine and it leaves my skin feeling so soft and nourished."</p>
+            <div class="testimonial-author">— Sarah K.</div>
+          </div>
+        </div>
+        <div class="testimonial">
+          <div class="testimonial-content">
+            <p>"I've tried many natural soaps, but this one stands out. The quality is exceptional and the ingredients are truly natural."</p>
+            <div class="testimonial-author">— James T.</div>
+          </div>
+        </div>
+        <div class="testimonial">
+          <div class="testimonial-content">
+            <p>"This has become my favorite soap. The fragrance is subtle yet lovely, and it lasts much longer than other bars I've used."</p>
+            <div class="testimonial-author">— Ava L.</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="testimonials-grid">
-      <div class="testimonial-card">
-        <p>"These soaps are a game-changer for my skincare routine. So gentle and luxurious!"</p>
-        <div class="testimonial-author">
-          <span class="author-name">Sarah K.</span>
-        </div>
-      </div>
-      <div class="testimonial-card">
-        <p>"I love the natural ingredients and how amazing my skin feels after using these soaps."</p>
-        <div class="testimonial-author">
-          <span class="author-name">Michael R.</span>
-        </div>
-      </div>
-      <div class="testimonial-card">
-        <p>"The attention to detail and craftsmanship is incredible. Truly a premium product."</p>
-        <div class="testimonial-author">
-          <span class="author-name">Emma L.</span>
-        </div>
-      </div>
+  {:else}
+    <div class="product-not-found">
+      <h1>Product Not Found</h1>
+      <p>We couldn't find the product you're looking for.</p>
+      <a href="/products" class="cta-button">Browse Our Products</a>
     </div>
-  </section>
+  {/if}
 </div>
 
 <footer class="footer">
@@ -223,268 +260,330 @@
     color: #4f9cba;
   }
 
-  /* Global Styles */
-  .home-container {
+  /* Basic styling */
+  .page-container {
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1rem;
-  }
-
-  .section-heading {
-    text-align: center;
-    margin-bottom: 2.5rem;
-  }
-
-  .section-heading h2 {
-    font-family: 'Playfair Display', 'Poppins', sans-serif;
-    font-size: 2.2rem;
-    color: #4f9cba;
-    margin-bottom: 0.5rem;
-  }
-
-  .section-heading p {
-    color: #666;
-    font-size: 1.1rem;
-  }
-
-  /* Hero Section */
-  .hero-section {
-    background: linear-gradient(135deg, #e8f4f9 0%, #f0f8fb 100%);
-    padding: 6rem 2rem;
-    text-align: center;
-    border-radius: 16px;
-    margin-top: 2rem;
-    margin-bottom: 4rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-content {
-    position: relative;
-    z-index: 2;
-  }
-
-  .hero-section h1 {
-    font-family: 'Righteous', 'Comfortaa', sans-serif;
-    font-size: 3.5rem;
-    color: #4f9cba;
-    margin-bottom: 1rem;
-  }
-
-  .hero-subtitle {
-    font-size: 1.4rem;
-    color: #666;
-    margin-bottom: 2rem;
-  }
-
-  .hero-ctas {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-  }
-
-  .primary-cta, .secondary-cta {
-    display: inline-block;
-    padding: 0.8rem 1.8rem;
-    border-radius: 30px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-  }
-
-  .primary-cta {
-    background-color: #4f9cba;
-    color: white;
-    box-shadow: 0 5px 15px rgba(79, 156, 186, 0.3);
-  }
-
-  .secondary-cta {
-    background-color: transparent;
-    color: #4f9cba;
-    border: 2px solid #4f9cba;
-  }
-
-  .primary-cta:hover {
-    background-color: #3d7f9a;
-    transform: translateY(-3px);
-  }
-
-  .secondary-cta:hover {
-    background-color: rgba(79, 156, 186, 0.1);
-  }
-
-  /* Ingredients Section */
-  .ingredients-section {
-    margin-bottom: 4rem;
-  }
-
-  .ingredients-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-  }
-
-  .ingredient-card {
-    background-color: #f0f8fb;
     padding: 2rem;
-    text-align: center;
-    border-radius: 12px;
-    transition: transform 0.3s ease;
+    font-family: 'Poppins', 'Montserrat', sans-serif;
   }
-
-  .ingredient-card:hover {
-    transform: translateY(-5px);
+  
+  h1, h2, h3, h4 {
+    font-family: 'Playfair Display', 'Poppins', sans-serif;
+    color: #4f9cba;
+    margin: 0 0 1rem 0;
+    letter-spacing: -0.5px;
   }
-
-  .ingredient-icon {
-    font-size: 3rem;
+  
+  h1 {
+    font-size: 2.5rem;
     margin-bottom: 1rem;
-    color: #4f9cba;
   }
-
-  .ingredient-card h3 {
-    color: #4f9cba;
-    margin-bottom: 0.5rem;
+  
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
   }
-
-  /* Featured Products Section */
-  .featured-products-section {
+  
+  h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  p {
+    margin: 0 0 1.5rem 0;
+    line-height: 1.6;
+  }
+  
+  a {
+    color: #4f9cba;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  a:hover {
+    color: #3d7f9a;
+  }
+  
+  /* Breadcrumbs */
+  .breadcrumbs {
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .breadcrumbs a {
+    margin-right: 0.5rem;
+  }
+  
+  .breadcrumbs span {
+    color: #333;
+  }
+  
+  /* Product Detail Layout */
+  .product-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
     margin-bottom: 4rem;
   }
-
-  .product-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
+  
+  /* Product Images */
+  .product-images {
+    position: relative;
   }
-
-  .product-card {
-    background-color: white;
+  
+  .main-image {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 5px 20px rgba(79, 156, 186, 0.1);
-    transition: transform 0.3s ease;
-    position: relative;
   }
-
-  .product-card:hover {
-    transform: translateY(-5px);
-  }
-
-  .product-image {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .product-image img {
+  
+  .main-image img {
     width: 100%;
-    height: 300px;
-    object-fit: cover;
-    object-position: center;
-    max-height: 300px;
-    transition: transform 0.3s ease;
+    height: auto;
+    display: block;
+    transition: transform 0.5s ease;
   }
-
-  .quick-add-btn {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(79, 156, 186, 0.9);
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    cursor: pointer;
+  
+  .main-image:hover img {
+    transform: scale(1.03);
   }
-
-  .product-card:hover .quick-add-btn {
-    opacity: 1;
-  }
-
-  .product-details {
-    padding: 1.5rem;
-  }
-
-  .product-details h3 {
-    color: #4f9cba;
-    margin-bottom: 0.5rem;
-  }
-
-  .product-meta {
+  
+  /* Product Info */
+  .product-info {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
+    flex-direction: column;
+    gap: 1.5rem;
   }
-
+  
   .product-price {
-    font-weight: bold;
+    font-size: 2rem;
+    font-weight: 700;
     color: #4f9cba;
   }
-
-  .product-colors {
+  
+  .product-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #555;
+  }
+  
+  /* Product Attributes */
+  .product-attributes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .color-options {
     display: flex;
-    gap: 5px;
+    gap: 0.8rem;
   }
-
-  .color-dot {
-    width: 15px;
-    height: 15px;
+  
+  .color-option {
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    display: inline-block;
-    border: 1px solid #e0e0e0;
-  }
-
-  .view-all-products {
-    text-align: center;
-    margin-top: 2rem;
-  }
-
-  .view-all-btn {
-    display: inline-block;
-    padding: 0.8rem 1.8rem;
-    background-color: #4f9cba;
-    color: white;
-    text-decoration: none;
-    border-radius: 30px;
+    border: 2px solid #eee;
+    cursor: pointer;
     transition: all 0.3s ease;
   }
-
-  .view-all-btn:hover {
-    background-color: #3d7f9a;
-    transform: translateY(-3px);
+  
+  .color-option:hover, .color-option.selected {
+    transform: scale(1.2);
+    border-color: #4f9cba;
   }
-
-  /* Testimonials Section */
-  .testimonials-section {
+  
+  .size-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
     background-color: #f0f8fb;
-    padding: 4rem 2rem;
-    border-radius: 16px;
+    color: #4f9cba;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+  }
+  
+  /* Materials & Care */
+  .product-materials ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .product-materials li {
+    background-color: #f0f8fb;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+  }
+  
+  .product-care {
+    padding: 1.2rem;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    border-left: 3px solid #4f9cba;
+  }
+  
+  .product-care p {
+    margin-bottom: 0;
+  }
+  
+  /* Action Buttons */
+  .product-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .add-to-cart, .view-cart {
+    padding: 1rem 2rem;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+  }
+  
+  .add-to-cart {
+    background-color: #4f9cba;
+    color: white;
+    border: none;
+    flex: 2;
+    box-shadow: 0 5px 15px rgba(79, 156, 186, 0.2);
+  }
+  
+  .add-to-cart:hover {
+    background-color: #3d7f9a;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(79, 156, 186, 0.3);
+  }
+  
+  .view-cart {
+    background-color: transparent;
+    border: 1px solid #4f9cba;
+    color: #4f9cba;
+    flex: 1;
+  }
+  
+  .view-cart:hover {
+    background-color: #f0f8fb;
+  }
+  
+  /* Tabs */
+  .product-details-tabs {
     margin-bottom: 4rem;
   }
-
+  
+  .tabs {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 2rem;
+  }
+  
+  .tab {
+    padding: 1rem 1.5rem;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-family: 'Poppins', 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .tab:hover {
+    color: #4f9cba;
+  }
+  
+  .tab.active {
+    color: #4f9cba;
+    border-bottom-color: #4f9cba;
+  }
+  
+  .tab-panel {
+    display: none;
+  }
+  
+  .tab-panel.active {
+    display: block;
+  }
+  
+  /* Features */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 2.5rem;
+  }
+  
+  .feature {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 12px;
+    background-color: #f0f8fb;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .feature:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(79, 156, 186, 0.12);
+  }
+  
+  .feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .feature h4 {
+    margin-bottom: 0.5rem;
+  }
+  
+  .feature p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+  }
+  
+  /* Customer Testimonials */
+  .customer-testimonials {
+    margin-bottom: 4rem;
+  }
+  
   .testimonials-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
   }
-
-  .testimonial-card {
+  
+  .testimonial {
     background-color: white;
-    padding: 2rem;
     border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(79, 156, 186, 0.1);
+    padding: 1.8rem;
+    box-shadow: 0 5px 20px rgba(79, 156, 186, 0.07);
+    border: 1px solid rgba(79, 156, 186, 0.03);
+  }
+
+  .testimonial-content p {
+    font-style: italic;
+    margin-bottom: 1rem;
   }
 
   .testimonial-author {
-    margin-top: 1rem;
-    text-align: right;
+    font-weight: 600;
     color: #4f9cba;
-    font-weight: 500;
   }
-
+  
   /* Footer */
   .footer {
     background-color: #f0f8fb;
@@ -588,37 +687,58 @@
   .copyright {
     text-align: center;
   }
-
-  /* Responsive Adjustments */
-  @media (max-width: 1024px) {
-    .product-grid,
-    .ingredients-grid,
-    .testimonials-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .hero-section h1 {
-      font-size: 2.8rem;
-    }
+  
+  /* Product Not Found */
+  .product-not-found {
+    text-align: center;
+    padding: 4rem 2rem;
+    background-color: #f0f8fb;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(79, 156, 186, 0.05);
   }
-
+  
+  .cta-button {
+    display: inline-block;
+    background-color: #4f9cba;
+    color: white;
+    padding: 0.8rem 1.8rem;
+    border-radius: 30px;
+    font-weight: 500;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    box-shadow: 0 5px 15px rgba(79, 156, 186, 0.2);
+    margin-top: 1rem;
+  }
+  
+  .cta-button:hover {
+    background-color: #3d7f9a;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(79, 156, 186, 0.3);
+  }
+  
+  /* Responsive Design */
   @media (max-width: 768px) {
-    .product-grid,
-    .ingredients-grid,
+    .product-detail {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    
+    .product-attributes {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    .features {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
     .testimonials-grid {
       grid-template-columns: 1fr;
-    }
-
-    .hero-section {
-      padding: 4rem 1rem;
-    }
-
-    .hero-section h1 {
-      font-size: 2.5rem;
-    }
-
-    .hero-ctas {
-      flex-direction: column;
+      gap: 1.5rem;
     }
     
     .footer-content {
@@ -635,6 +755,10 @@
   }
   
   @media (max-width: 576px) {
+    .product-actions {
+      flex-direction: column;
+    }
+    
     header {
       flex-direction: column;
       gap: 1rem;

@@ -91,7 +91,7 @@
         <a href="javascript:void(0)" class="cta-button">Learn More About Our Initiatives</a>
       </div>
       <div class="image-wrapper">
-        <img src="https://vocsaigon.com/assets/images/nature1.png" alt="Community workshop" />
+        <img src="https://vocsaigon.com/assets/images/img1.png" alt="Community workshop" />
       </div>
     </div>
   </div>
