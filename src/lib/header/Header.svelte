@@ -3,40 +3,51 @@
 </script>
 
 <header>
-  <div class="corner logo-corner">
-    <a href="/">
-      <span class="logo-text">Đê Mê</span>
-    </a>
+  <div class="logo">
+    <a href="/">Đê Mê</a>
   </div>
-
+  
   <nav>
-    <svg viewBox="0 0 2 3" aria-hidden="true" class="nav-curve">
-      <path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
-    </svg>
-    <ul>
-      <li class:active={$page.url.pathname === '/'}>
-        <a data-sveltekit-preload-data href="/">Home</a>
-      </li>
-      <li class:active={$page.url.pathname === '/about'}>
-        <a data-sveltekit-preload-data href="/about">About</a>
-      </li>
-      <li class:active={$page.url.pathname === '/products'}>
-        <a data-sveltekit-preload-data href="/products">Products</a>
-      </li>
-    </ul>
-    <svg viewBox="0 0 2 3" aria-hidden="true" class="nav-curve">
-      <path d="M0,0 L0,3 C0.5,3 0.5,3 1,2 L2,0 Z" />
-    </svg>
+    <a href="/" class:active={$page.url.pathname === '/'}>Home</a>
+    <a href="/about" class:active={$page.url.pathname === '/about'}>About</a>
+    <a href="/products" class:active={$page.url.pathname === '/products'}>Products</a>
   </nav>
-
-  <div class="corner cart-corner">
-    <a href="/order" class="cart-link" class:active={$page.url.pathname === '/order'}>
-      <span class="cart-icon">🛒</span>
-      <span class="cart-text">Cart</span>
-    </a>
+  
+  <div class="cart">
+    <a href="/order">🛒 Cart</a>
   </div>
 </header>
 
 <style>
-  /* ... (previous styles remain the same) ... */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+    position: static;
+  }
+
+  nav {
+    display: flex;
+    gap: 1rem;
+  }
+
+  a {
+    text-decoration: none;
+    color: #4f9cba;
+    position: relative;
+  }
+
+  .active {
+    font-weight: bold;
+  }
+
+  /* Remove any potential transform or clip effects */
+  * {
+    transform: none !important;
+    clip-path: none !important;
+  }
 </style>

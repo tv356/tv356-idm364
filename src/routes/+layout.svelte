@@ -1,41 +1,37 @@
 <script>
-  import Header from '$lib/header/Header.svelte';
   import '../app.css';
 </script>
 
-<Header />
+<div class="app-container">
+  <main>
+    <slot />
+  </main>
 
-<main>
-  <slot />
-</main>
-
-<footer>
-  <p>Designed and built by @Cheryl Vo</p>
-</footer>
+  <footer>
+    <p>Designed and built by @Cheryl Vo</p>
+  </footer>
+</div>
 
 <style>
+  .app-container {
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+
   main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
     width: 100%;
     max-width: 1024px;
     margin: 0 auto;
+    padding: 1rem;
     box-sizing: border-box;
   }
 
   footer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 40px;
-  }
-
-  @media (min-width: 480px) {
-    footer {
-      padding: 40px 0;
-    }
+    text-align: center;
+    padding: 1rem;
+    width: 100%;
   }
 </style>

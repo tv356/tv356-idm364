@@ -281,8 +281,10 @@
     width: 100%;
     height: 300px;
     object-fit: cover;
+    object-position: center;
+    max-height: 300px;
     transition: transform 0.3s ease;
-  }
+}
 
   .quick-add-btn {
     position: absolute;

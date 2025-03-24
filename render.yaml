@@ -1,7 +1,9 @@
 services:
   - type: web
-    name: sveltekit
+    name: soap-store
     runtime: node
-    buildCommand: yarn install && yarn build
-    startCommand: node build/index.js
-    autoDeploy: false
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 18.x
