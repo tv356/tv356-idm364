@@ -7,35 +7,172 @@
     export let data;
     
     let cart = [];
-    let selectedColor = data.product?.colors?.[0] || '';
+    let filterCategory = 'all';
+    let searchQuery = '';
+    let sortOrder = 'featured';
+    
+    // Sample products data (normally this would come from the server)
+    let products = [
+      {
+        id: 1,
+        name: 'Lavender Dream Soap',
+        price: 8.95,
+        imageUrl: 'https://placehold.co/400x300/e9f3f7/4f9cba',
+        description: 'Calming lavender essential oil blend for relaxation and stress relief.',
+        category: 'Essential Oils',
+        featured: true,
+        colors: ['#9c89b8', '#b8bedd', '#f0a6ca'],
+        size: '4 oz',
+        materials: ['Olive Oil', 'Coconut Oil', 'Lavender Essential Oil'],
+        careInstructions: 'Keep soap dry between uses for longer life. Use with a soap dish that allows water to drain.'
+      },
+      {
+        id: 2,
+        name: 'Citrus Burst Soap',
+        price: 7.95,
+        imageUrl: 'https://placehold.co/400x300/f7f3e9/fa9746',
+        description: 'Energizing blend of orange, lemon and grapefruit essential oils.',
+        category: 'Essential Oils',
+        featured: true,
+        colors: ['#ffcb77', '#f8961e', '#ffd166'],
+        size: '4 oz',
+        materials: ['Olive Oil', 'Coconut Oil', 'Citrus Essential Oils'],
+        careInstructions: 'Keep soap dry between uses for longer life. Use with a soap dish that allows water to drain.'
+      },
+      {
+        id: 3,
+        name: 'Oatmeal & Honey Soap',
+        price: 8.50,
+        imageUrl: 'https://placehold.co/400x300/f7f5e9/d1b967',
+        description: 'Gentle, nourishing soap for sensitive skin with real oatmeal and honey.',
+        category: 'Sensitive Skin',
+        featured: false,
+        colors: ['#e9c46a', '#dda15e', '#bc6c25'],
+        size: '4 oz',
+        materials: ['Olive Oil', 'Coconut Oil', 'Oatmeal', 'Honey'],
+        careInstructions: 'Keep soap dry between uses for longer life. Use with a soap dish that allows water to drain.'
+      },
+      {
+        id: 4,
+        name: 'Charcoal Detox Soap',
+        price: 9.95,
+        imageUrl: 'https://placehold.co/400x300/e0e0e0/555555',
+        description: 'Deep cleansing activated charcoal soap perfect for oily or acne-prone skin.',
+        category: 'Specialty',
+        featured: true,
+        colors: ['#2b2d42', '#8d99ae', '#edf2f4'],
+        size: '4 oz',
+        materials: ['Olive Oil', 'Coconut Oil', 'Activated Charcoal', 'Tea Tree Oil'],
+        careInstructions: 'Keep soap dry between uses for longer life. Use with a soap dish that allows water to drain.'
+      },
+      {
+        id: 5,
+        name: 'Rose Petal Soap',
+        price: 10.95,
+        imageUrl: 'https://placehold.co/400x300/f8edeb/e5989b',
+        description: 'Luxurious soap with real rose petals and a delicate floral scent.',
+        category: 'Floral',
+        featured: false,
+        colors: ['#ffccd5', '#ffb3c1', '#ff8fab'],
+        size: '4 oz',
+        materials: ['Olive Oil', 'Coconut Oil', 'Rose Essential Oil', 'Rose Petals'],
+        careInstructions: 'Keep soap dry between uses for longer life. Use with a soap dish that allows water to drain.'
+      },
+      {
+        id: 6,
+        name: 'Eucalyptus Mint Soap',
+        price: 8.95,
+        imageUrl: 'https://placehold.co/400x300/e0f5e9/52b788',
+        description: 'Refreshing and invigorating blend perfect for morning showers.',
+        category: 'Essential Oils',
+        featured: false,
+        colors: ['#99e2b4', '#88d4ab', '#52b788'],
+        size: '4 oz',
+        materials: ['Olive Oil', 'Coconut Oil', 'Eucalyptus Oil', 'Peppermint Oil'],
+        careInstructions: 'Keep soap dry between uses for longer life. Use with a soap dish that allows water to drain.'
+      },
+      {
+        id: 7,
+        name: 'Unscented Pure Soap',
+        price: 7.50,
+        imageUrl: 'https://placehold.co/400x300/ffffff/cccccc',
+        description: 'Fragrance-free soap for those with sensitivities or allergies.',
+        category: 'Sensitive Skin',
+        featured: false,
+        colors: ['#f8f9fa', '#e9ecef', '#dee2e6'],
+        size: '4 oz',
+        materials: ['Olive Oil', 'Coconut Oil', 'Shea Butter'],
+        careInstructions: 'Keep soap dry between uses for longer life. Use with a soap dish that allows water to drain.'
+      },
+      {
+        id: 8,
+        name: 'Coffee Scrub Soap',
+        price: 9.50,
+        imageUrl: 'https://placehold.co/400x300/e6ccb2/7f5539',
+        description: 'Exfoliating soap with coffee grounds to invigorate and smooth skin.',
+        category: 'Exfoliating',
+        featured: true,
+        colors: ['#9c6644', '#7f5539', '#b08968'],
+        size: '4 oz',
+        materials: ['Olive Oil', 'Coconut Oil', 'Coffee Grounds', 'Vanilla Extract'],
+        careInstructions: 'Keep soap dry between uses for longer life. Use with a soap dish that allows water to drain.'
+      }
+    ];
+    
+    // Get all unique categories
+    let categories = ['all', ...new Set(products.map(product => product.category))];
     
     onMount(() => {
       if (browser) {
         cart = JSON.parse(localStorage.getItem('cart')) || [];
       }
-      
-      if (data.product?.colors?.length > 0) {
-        selectedColor = data.product.colors[0];
-      }
     });
   
-    function addToCart() {
-      const productToAdd = { ...data.product };
-      cart = [...cart, productToAdd];
+    function addToCart(product) {
+      cart = [...cart, product];
       if (browser) {
         localStorage.setItem('cart', JSON.stringify(cart));
         alert('Product added to cart!');
       }
     }
   
-    function viewCart() {
-      goto('/order');
+    function viewProductDetails(productId) {
+      goto(`/products/${productId}`);
     }
+    
+    // Filter products based on category and search query
+    $: filteredProducts = products.filter(product => {
+      // Filter by category
+      const categoryMatch = filterCategory === 'all' || product.category === filterCategory;
+      
+      // Filter by search query
+      const searchMatch = !searchQuery || 
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        product.description.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      return categoryMatch && searchMatch;
+    });
+    
+    // Sort products
+    $: sortedProducts = [...filteredProducts].sort((a, b) => {
+      if (sortOrder === 'price-low') {
+        return a.price - b.price;
+      } else if (sortOrder === 'price-high') {
+        return b.price - a.price;
+      } else if (sortOrder === 'name') {
+        return a.name.localeCompare(b.name);
+      } else {
+        // Default sort: featured first, then by id
+        if (a.featured && !b.featured) return -1;
+        if (!a.featured && b.featured) return 1;
+        return a.id - b.id;
+      }
+    });
   </script>
   
   <svelte:head>
-    <title>{data.product ? data.product.name : 'Product'} - Đê Mê</title>
-    <meta name="description" content={data.product ? data.product.description : 'Product details'} />
+    <title>All Products - Đê Mê</title>
+    <meta name="description" content="Browse our collection of handcrafted, natural soaps made with the finest ingredients." />
   </svelte:head>
   
   <header>
@@ -50,149 +187,121 @@
     </nav>
     
     <div class="cart">
-      <a href="/order">🛒 Cart</a>
+      <a href="/order">🛒 Cart ({cart.length})</a>
     </div>
   </header>
   
   <div class="page-container">
-    {#if data.product}
-      <div class="breadcrumbs">
-        <a href="/">Home</a> &gt; 
-        <a href="/products">Products</a> &gt; 
-        <span>{data.product.name}</span>
-      </div>
-      
-      <div class="product-detail">
-        <div class="product-images">
-          <div class="main-image">
-            <img src={data.product.imageUrl} alt={data.product.name} />
-          </div>
+    <div class="products-hero">
+      <h1>Our Handcrafted Soaps</h1>
+      <p>Each bar is made with care using the finest natural ingredients</p>
+    </div>
+    
+    <div class="filter-section">
+      <div class="filter-controls">
+        <div class="search-bar">
+          <input 
+            type="text" 
+            placeholder="Search products..." 
+            bind:value={searchQuery}
+            aria-label="Search products"
+          />
         </div>
         
-        <div class="product-info">
-          <h1>{data.product.name}</h1>
-          
-          <div class="product-price">
-            ${data.product.price.toFixed(2)}
+        <div class="category-filter">
+          <label for="category-select">Filter by:</label>
+          <select id="category-select" bind:value={filterCategory}>
+            {#each categories as category}
+              <option value={category}>{category === 'all' ? 'All Categories' : category}</option>
+            {/each}
+          </select>
+        </div>
+        
+        <div class="sort-filter">
+          <label for="sort-select">Sort by:</label>
+          <select id="sort-select" bind:value={sortOrder}>
+            <option value="featured">Featured</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="name">Name: A to Z</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="results-count">
+        Showing {sortedProducts.length} of {products.length} products
+      </div>
+    </div>
+    
+    <div class="products-grid">
+      {#each sortedProducts as product}
+        <div class="product-card">
+          <div class="product-image" on:click={() => viewProductDetails(product.id)}>
+            <img src={product.imageUrl} alt={product.name} />
+            {#if product.featured}
+              <div class="featured-badge">Featured</div>
+            {/if}
           </div>
           
-          <div class="product-description">
-            <p>{data.product.description}</p>
-          </div>
-          
-          <div class="product-attributes">
-            <div class="product-colors">
-              <h3>Colors</h3>
-              <div class="color-options">
-                {#each data.product.colors as color}
-                  <button 
-                    class="color-option" 
-                    class:selected={selectedColor === color}
-                    style="background-color: {color};" 
-                    on:click={() => selectedColor = color}
-                    aria-label={`Select ${color} color`}
-                  ></button>
-                {/each}
-              </div>
-            </div>
+          <div class="product-info">
+            <h3 class="product-title">{product.name}</h3>
+            <div class="product-category">{product.category}</div>
+            <div class="product-price">${product.price.toFixed(2)}</div>
+            <p class="product-description">{product.description}</p>
             
-            <div class="product-size">
-              <h3>Size</h3>
-              <div class="size-badge">{data.product.size}</div>
-            </div>
-          </div>
-          
-          <div class="product-materials">
-            <h3>Materials</h3>
-            <ul>
-              {#each data.product.materials as material}
-                <li>{material}</li>
+            <div class="color-options">
+              {#each product.colors as color}
+                <div 
+                  class="color-preview" 
+                  style="background-color: {color};" 
+                  title={color}
+                ></div>
               {/each}
-            </ul>
-          </div>
-          
-          <div class="product-care">
-            <h3>Care Instructions</h3>
-            <p>{data.product.careInstructions}</p>
-          </div>
-          
-          <div class="product-actions">
-            <button class="add-to-cart" on:click={addToCart}>
-              Add to Cart
-            </button>
-            <button class="view-cart" on:click={viewCart}>
-              View Cart
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      <div class="product-details-tabs">
-        <div class="tabs">
-          <button class="tab active">Description</button>
-          <button class="tab">Ingredients</button>
-          <button class="tab">Reviews</button>
-        </div>
-        
-        <div class="tab-content">
-          <div class="tab-panel active">
-            <h2>About {data.product.name}</h2>
-            <p>{data.product.description}</p>
-            <p>Our soaps are handcrafted with care using traditional cold-process methods. Each bar is unique and made with the finest natural ingredients to ensure a luxurious bathing experience.</p>
+            </div>
             
-            <div class="features">
-              <div class="feature">
-                <div class="feature-icon">🌿</div>
-                <h4>Natural Ingredients</h4>
-                <p>Made with plant-based oils and botanicals</p>
-              </div>
-              
-              <div class="feature">
-                <div class="feature-icon">🧪</div>
-                <h4>No Harsh Chemicals</h4>
-                <p>Free from SLS, parabens, and synthetic fragrances</p>
-              </div>
-              
-              <div class="feature">
-                <div class="feature-icon">🌍</div>
-                <h4>Eco-Friendly</h4>
-                <p>Sustainable practices and minimal packaging</p>
-              </div>
+            <div class="product-actions">
+              <button class="view-details" on:click={() => viewProductDetails(product.id)}>
+                View Details
+              </button>
+              <button class="add-to-cart" on:click={() => addToCart(product)}>
+                Add to Cart
+              </button>
             </div>
           </div>
         </div>
-      </div>
-      
-      <div class="customer-testimonials">
-        <h2>What Our Customers Say</h2>
-        <div class="testimonials-grid">
-          <div class="testimonial">
-            <div class="testimonial-content">
-              <p>"Absolutely love this soap! The scent is divine and it leaves my skin feeling so soft and nourished."</p>
-              <div class="testimonial-author">— Sarah K.</div>
-            </div>
-          </div>
-          <div class="testimonial">
-            <div class="testimonial-content">
-              <p>"I've tried many natural soaps, but this one stands out. The quality is exceptional and the ingredients are truly natural."</p>
-              <div class="testimonial-author">— James T.</div>
-            </div>
-          </div>
-          <div class="testimonial">
-            <div class="testimonial-content">
-              <p>"This has become my favorite soap. The fragrance is subtle yet lovely, and it lasts much longer than other bars I've used."</p>
-              <div class="testimonial-author">— Ava L.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    {:else}
-      <div class="product-not-found">
-        <h1>Product Not Found</h1>
-        <p>We couldn't find the product you're looking for.</p>
-        <a href="/products" class="cta-button">Browse Our Products</a>
+      {/each}
+    </div>
+    
+    {#if sortedProducts.length === 0}
+      <div class="no-products">
+        <h2>No products found</h2>
+        <p>Try adjusting your search or filter criteria.</p>
+        <button class="reset-filters" on:click={() => {
+          filterCategory = 'all';
+          searchQuery = '';
+        }}>
+          Reset Filters
+        </button>
       </div>
     {/if}
+    
+    <div class="collection-highlight">
+      <h2>Our Collections</h2>
+      <div class="collections-grid">
+        {#each categories.filter(c => c !== 'all') as category}
+          <div class="collection-card">
+            <h3>{category}</h3>
+            <p>{getCollectionDescription(category)}</p>
+            <button 
+              class="collection-button"
+              on:click={() => filterCategory = category}
+            >
+              View {category}
+            </button>
+          </div>
+        {/each}
+      </div>
+    </div>
   </div>
   
   <footer class="footer">
@@ -306,282 +415,299 @@
       color: #3d7f9a;
     }
     
-    /* Breadcrumbs */
-    .breadcrumbs {
+    /* Products Hero */
+    .products-hero {
+      text-align: center;
+      padding: 3rem 1rem;
       margin-bottom: 2rem;
+      background-color: #f0f8fb;
+      border-radius: 12px;
+    }
+    
+    .products-hero p {
+      font-size: 1.2rem;
+      color: #666;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    /* Filter Section */
+    .filter-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .filter-controls {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .search-bar input {
+      padding: 0.7rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      width: 250px;
+      font-family: 'Poppins', 'Montserrat', sans-serif;
+    }
+    
+    .search-bar input:focus {
+      outline: none;
+      border-color: #4f9cba;
+      box-shadow: 0 0 0 2px rgba(79, 156, 186, 0.1);
+    }
+    
+    .category-filter, .sort-filter {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    select {
+      padding: 0.6rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      background-color: white;
+      cursor: pointer;
+      font-family: 'Poppins', 'Montserrat', sans-serif;
+    }
+    
+    select:focus {
+      outline: none;
+      border-color: #4f9cba;
+    }
+    
+    .results-count {
       font-size: 0.9rem;
       color: #666;
     }
     
-    .breadcrumbs a {
-      margin-right: 0.5rem;
-    }
-    
-    .breadcrumbs span {
-      color: #333;
-    }
-    
-    /* Product Detail Layout */
-    .product-detail {
+    /* Products Grid */
+    .products-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      margin-bottom: 4rem;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
     }
     
-    /* Product Images */
-    .product-images {
-      position: relative;
-    }
-    
-    .main-image {
+    .product-card {
+      background-color: white;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 5px 20px rgba(79, 156, 186, 0.1);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
     }
     
-    .main-image img {
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(79, 156, 186, 0.15);
+    }
+    
+    .product-image {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    
+    .product-image img {
       width: 100%;
-      height: auto;
+      height: 200px;
+      object-fit: cover;
       display: block;
       transition: transform 0.5s ease;
     }
     
-    .main-image:hover img {
-      transform: scale(1.03);
+    .product-image:hover img {
+      transform: scale(1.05);
     }
     
-    /* Product Info */
+    .featured-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #4f9cba;
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    
     .product-info {
+      padding: 1.5rem;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      flex-grow: 1;
+    }
+    
+    .product-title {
+      font-size: 1.2rem;
+      margin-bottom: 0.3rem;
+    }
+    
+    .product-category {
+      color: #666;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
     }
     
     .product-price {
-      font-size: 2rem;
       font-weight: 700;
+      font-size: 1.3rem;
       color: #4f9cba;
+      margin-bottom: 0.8rem;
     }
     
     .product-description {
-      font-size: 1.1rem;
-      line-height: 1.6;
+      font-size: 0.9rem;
       color: #555;
-    }
-    
-    /* Product Attributes */
-    .product-attributes {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
       margin-bottom: 1rem;
+      flex-grow: 1;
     }
     
     .color-options {
       display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+    }
+    
+    .color-preview {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1px solid #eee;
+    }
+    
+    .product-actions {
+      display: flex;
       gap: 0.8rem;
     }
     
-    .color-option {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      border: 2px solid #eee;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    
-    .color-option:hover, .color-option.selected {
-      transform: scale(1.2);
-      border-color: #4f9cba;
-    }
-    
-    .size-badge {
-      display: inline-block;
-      padding: 0.4rem 1rem;
-      background-color: #f0f8fb;
-      color: #4f9cba;
-      border-radius: 20px;
-      font-weight: 600;
-      text-transform: uppercase;
-      font-size: 0.9rem;
-    }
-    
-    /* Materials & Care */
-    .product-materials ul {
-      list-style-type: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    
-    .product-materials li {
-      background-color: #f0f8fb;
-      padding: 0.3rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.9rem;
-    }
-    
-    .product-care {
-      padding: 1.2rem;
-      border-radius: 8px;
-      background-color: #f9f9f9;
-      border-left: 3px solid #4f9cba;
-    }
-    
-    .product-care p {
-      margin-bottom: 0;
-    }
-    
-    /* Action Buttons */
-    .product-actions {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    
-    .add-to-cart, .view-cart {
-      padding: 1rem 2rem;
+    .view-details, .add-to-cart {
+      padding: 0.7rem 1rem;
       border-radius: 30px;
       font-weight: 600;
-      font-size: 1rem;
+      font-size: 0.9rem;
       cursor: pointer;
       transition: all 0.3s ease;
-      letter-spacing: 0.5px;
+      flex: 1;
+      text-align: center;
+    }
+    
+    .view-details {
+      background-color: transparent;
+      border: 1px solid #4f9cba;
+      color: #4f9cba;
+    }
+    
+    .view-details:hover {
+      background-color: #f0f8fb;
     }
     
     .add-to-cart {
       background-color: #4f9cba;
       color: white;
       border: none;
-      flex: 2;
-      box-shadow: 0 5px 15px rgba(79, 156, 186, 0.2);
+      box-shadow: 0 3px 10px rgba(79, 156, 186, 0.2);
     }
     
     .add-to-cart:hover {
       background-color: #3d7f9a;
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(79, 156, 186, 0.3);
+      box-shadow: 0 5px 15px rgba(79, 156, 186, 0.3);
     }
     
-    .view-cart {
-      background-color: transparent;
-      border: 1px solid #4f9cba;
-      color: #4f9cba;
-      flex: 1;
-    }
-    
-    .view-cart:hover {
+    /* No Products Found */
+    .no-products {
+      text-align: center;
+      padding: 3rem;
       background-color: #f0f8fb;
+      border-radius: 12px;
+      margin-bottom: 3rem;
     }
     
-    /* Tabs */
-    .product-details-tabs {
+    .reset-filters {
+      background-color: #4f9cba;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+      box-shadow: 0 3px 10px rgba(79, 156, 186, 0.2);
+    }
+    
+    .reset-filters:hover {
+      background-color: #3d7f9a;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(79, 156, 186, 0.3);
+    }
+    
+    /* Collection Highlight */
+    .collection-highlight {
       margin-bottom: 4rem;
     }
     
-    .tabs {
-      display: flex;
-      gap: 0.5rem;
-      border-bottom: 1px solid #eee;
+    .collection-highlight h2 {
+      text-align: center;
       margin-bottom: 2rem;
     }
     
-    .tab {
-      padding: 1rem 1.5rem;
-      background: none;
-      border: none;
-      border-bottom: 3px solid transparent;
-      font-family: 'Poppins', 'Montserrat', sans-serif;
-      font-weight: 600;
-      font-size: 1rem;
-      color: #666;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    
-    .tab:hover {
-      color: #4f9cba;
-    }
-    
-    .tab.active {
-      color: #4f9cba;
-      border-bottom-color: #4f9cba;
-    }
-    
-    .tab-panel {
-      display: none;
-    }
-    
-    .tab-panel.active {
-      display: block;
-    }
-    
-    /* Features */
-    .features {
+    .collections-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 2rem;
-      margin-top: 2.5rem;
     }
     
-    .feature {
-      text-align: center;
-      padding: 1.5rem;
-      border-radius: 12px;
+    .collection-card {
       background-color: #f0f8fb;
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     
-    .feature:hover {
+    .collection-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 25px rgba(79, 156, 186, 0.12);
     }
     
-    .feature-icon {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
+    .collection-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.8rem;
     }
     
-    .feature h4 {
-      margin-bottom: 0.5rem;
-    }
-    
-    .feature p {
-      margin-bottom: 0;
+    .collection-card p {
       font-size: 0.9rem;
+      margin-bottom: 1.5rem;
     }
     
-    /* Customer Testimonials */
-    .customer-testimonials {
-      margin-bottom: 4rem;
-    }
-    
-    .testimonials-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2rem;
-    }
-    
-    .testimonial {
-      background-color: white;
-      border-radius: 12px;
-      padding: 1.8rem;
-      box-shadow: 0 5px 20px rgba(79, 156, 186, 0.07);
-      border: 1px solid rgba(79, 156, 186, 0.03);
-    }
-  
-    .testimonial-content p {
-      font-style: italic;
-      margin-bottom: 1rem;
-    }
-  
-    .testimonial-author {
-      font-weight: 600;
+    .collection-button {
+      display: inline-block;
+      background-color: transparent;
       color: #4f9cba;
+      padding: 0.6rem 1.2rem;
+      border: 1px solid #4f9cba;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .collection-button:hover {
+      background-color: #4f9cba;
+      color: white;
     }
     
     /* Footer */
@@ -688,57 +814,35 @@
       text-align: center;
     }
     
-    /* Product Not Found */
-    .product-not-found {
-      text-align: center;
-      padding: 4rem 2rem;
-      background-color: #f0f8fb;
-      border-radius: 12px;
-      box-shadow: 0 5px 20px rgba(79, 156, 186, 0.05);
-    }
-    
-    .cta-button {
-      display: inline-block;
-      background-color: #4f9cba;
-      color: white;
-      padding: 0.8rem 1.8rem;
-      border-radius: 30px;
-      font-weight: 500;
-      font-size: 1.1rem;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      letter-spacing: 0.5px;
-      box-shadow: 0 5px 15px rgba(79, 156, 186, 0.2);
-      margin-top: 1rem;
-    }
-    
-    .cta-button:hover {
-      background-color: #3d7f9a;
-      text-decoration: none;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(79, 156, 186, 0.3);
-    }
-    
     /* Responsive Design */
     @media (max-width: 768px) {
-      .product-detail {
-        grid-template-columns: 1fr;
-        gap: 2rem;
+      .filter-section {
+        flex-direction: column;
+        align-items: flex-start;
       }
       
-      .product-attributes {
-        grid-template-columns: 1fr;
-        gap: 1rem;
+      .filter-controls {
+        width: 100%;
+        flex-direction: column;
       }
       
-      .features {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
+      .search-bar input {
+        width: 100%;
       }
       
-      .testimonials-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
+      .category-filter, .sort-filter {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      select {
+        flex: 1;
+      }
+      
+      .results-count {
+        width: 100%;
+        text-align: right;
+        margin-top: 1rem;
       }
       
       .footer-content {
@@ -753,10 +857,19 @@
         gap: 1rem;
       }
     }
-    
-    @media (max-width: 576px) {
-      .product-actions {
-        flex-direction: column;
-      }
-    }
   </style>
+  
+  <script context="module">
+    // Helper function to provide descriptions for the collections
+    function getCollectionDescription(category) {
+      const descriptions = {
+        'Essential Oils': 'Aromatic soaps made with pure essential oils for a natural fragrance experience.',
+        'Sensitive Skin': 'Gentle formulations for those with delicate or easily irritated skin.',
+        'Specialty': 'Unique soaps with special ingredients for specific skincare concerns.',
+        'Floral': 'Elegant soaps featuring the delicate scents and properties of flower essences.',
+        'Exfoliating': 'Textured soaps that gently remove dead skin cells for a smoother feel.'
+      };
+      
+      return descriptions[category] || 'Handcrafted soaps made with natural ingredients.';
+    }
+  </script>
