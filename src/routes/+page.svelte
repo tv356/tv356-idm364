@@ -1,61 +1,222 @@
-<section class="featured-section">
-  <div class="section-heading">
-    <h2>Our Top 3 Ingredients</h2>
-    <p>Explore our range, and find the perfect product to spark your senses.</p>
-  </div>
-  <div class="ingredients-grid">
-    <div class="ingredient-card">
-      <div class="ingredient-image">
-        <img src="/api/placeholder/400/300" alt="Ginger ingredient" />
+<script>
+  import { products } from '$lib/products.js';
+  import { browser } from '$app/environment';
+  import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
+
+  let cart = [];
+  onMount(() => {
+    if (browser) {
+      cart = JSON.parse(localStorage.getItem('cart')) || [];
+    }
+  });
+
+  function addToCart(product) {
+    cart = [...cart, product];
+    if (browser) {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+  }
+
+  function viewCart() {
+    goto('/order');
+  }
+
+  // Featured products (top 3)
+  $: featuredProducts = products.slice(0, 3);
+</script>
+
+<svelte:head>
+  <title>Đê Mê - Artisan Natural Soap Collection</title>
+  <meta name="description" content="Discover our handcrafted, natural soaps made with premium ingredients for gentle, nourishing skincare." />
+</svelte:head>
+
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1>Đê Mê Soap Artistry</h1>
+      <p class="hero-subtitle">Crafting Moments of Pure Sensory Delight</p>
+      <div class="hero-ctas">
+        <a href="#featured-products" class="primary-cta">Explore Collection</a>
+        <a href="/about" class="secondary-cta">Our Story</a>
       </div>
-      <div class="ingredient-content">
+    </div>
+  </section>
+
+  <!-- Ingredients Showcase -->
+  <section class="ingredients-section">
+    <div class="section-heading">
+      <h2>Our Signature Ingredients</h2>
+      <p>Carefully selected natural elements that transform your skincare routine</p>
+    </div>
+    <div class="ingredients-grid">
+      <div class="ingredient-card">
+        <div class="ingredient-icon">🌿</div>
         <h3>Ginger</h3>
-        <p>Invigorating and warming, our ginger-infused soaps enhance circulation and leave skin glowing.</p>
+        <p>Invigorating essence that enhances circulation and revitalizes skin</p>
       </div>
-    </div>
-    <div class="ingredient-card">
-      <div class="ingredient-image">
-        <img src="/api/placeholder/400/300" alt="Perilla ingredient" />
-      </div>
-      <div class="ingredient-content">
+      <div class="ingredient-card">
+        <div class="ingredient-icon">🍃</div>
         <h3>Perilla</h3>
-        <p>Rich in antioxidants, perilla extract helps protect and nourish even the most sensitive skin.</p>
+        <p>Antioxidant-rich extract that protects and nourishes sensitive skin</p>
       </div>
-    </div>
-    <div class="ingredient-card">
-      <div class="ingredient-image">
-        <img src="/api/placeholder/400/300" alt="Sarsi Spice ingredient" />
-      </div>
-      <div class="ingredient-content">
+      <div class="ingredient-card">
+        <div class="ingredient-icon">✨</div>
         <h3>Sarsi Spice</h3>
-        <p>Our signature blend with exotic sarsi creates an aromatic experience that soothes the mind and spirit.</p>
+        <p>Exotic blend creating a soothing, aromatic sensory experience</p>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+
+  <!-- Featured Products -->
+  <section id="featured-products" class="featured-products-section">
+    <div class="section-heading">
+      <h2>Featured Soaps</h2>
+      <p>Discover our most beloved creations</p>
+    </div>
+    <div class="product-grid">
+      {#each featuredProducts as product}
+        <div class="product-card">
+          <div class="product-image">
+            <a href="/soap/{product.id}">
+              <img src={product.imageUrl} alt={product.name} />
+            </a>
+            <button 
+              class="quick-add-btn" 
+              on:click={() => addToCart(product)}
+            >
+              Quick Add +
+            </button>
+          </div>
+          <div class="product-details">
+            <h3>{product.name}</h3>
+            <div class="product-meta">
+              <span class="product-price">${product.price}</span>
+              <span class="product-size">{product.size}</span>
+            </div>
+            <div class="product-colors">
+              {#each product.colors as color}
+                <span 
+                  class="color-dot" 
+                  style="background-color: {color};"
+                ></span>
+              {/each}
+            </div>
+          </div>
+        </div>
+      {/each}
+    </div>
+    <div class="view-all-products">
+      <a href="/products" class="view-all-btn">View All Products</a>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials-section">
+    <div class="section-heading">
+      <h2>What Our Customers Say</h2>
+      <p>Real experiences from our soap enthusiasts</p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <p>"These soaps are a game-changer for my skincare routine. So gentle and luxurious!"</p>
+        <div class="testimonial-author">
+          <span class="author-name">Sarah K.</span>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p>"I love the natural ingredients and how amazing my skin feels after using these soaps."</p>
+        <div class="testimonial-author">
+          <span class="author-name">Michael R.</span>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p>"The attention to detail and craftsmanship is incredible. Truly a premium product."</p>
+        <div class="testimonial-author">
+          <span class="author-name">Emma L.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
 
 <style>
-  .featured-section {
-    padding: 4rem 2rem;
-    margin-bottom: 3rem;
+  /* Global Styles */
+  .home-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
   }
 
-  .section-heading {
+  /* Hero Section */
+  .hero-section {
+    background: linear-gradient(135deg, #e8f4f9 0%, #f0f8fb 100%);
+    padding: 6rem 2rem;
     text-align: center;
-    max-width: 800px;
-    margin: 0 auto 3rem;
+    border-radius: 16px;
+    margin-bottom: 4rem;
+    position: relative;
+    overflow: hidden;
   }
 
-  .section-heading h2 {
+  .hero-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-section h1 {
     font-family: 'Righteous', 'Comfortaa', sans-serif;
+    font-size: 3.5rem;
     color: #4f9cba;
-    font-size: 2.2rem;
     margin-bottom: 1rem;
   }
 
-  .section-heading p {
-    font-size: 1.1rem;
+  .hero-subtitle {
+    font-size: 1.4rem;
     color: #666;
+    margin-bottom: 2rem;
+  }
+
+  .hero-ctas {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .primary-cta, .secondary-cta {
+    display: inline-block;
+    padding: 0.8rem 1.8rem;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .primary-cta {
+    background-color: #4f9cba;
+    color: white;
+    box-shadow: 0 5px 15px rgba(79, 156, 186, 0.3);
+  }
+
+  .secondary-cta {
+    background-color: transparent;
+    color: #4f9cba;
+    border: 2px solid #4f9cba;
+  }
+
+  .primary-cta:hover {
+    background-color: #3d7f9a;
+    transform: translateY(-3px);
+  }
+
+  .secondary-cta:hover {
+    background-color: rgba(79, 156, 186, 0.1);
+  }
+
+  /* Ingredients Section */
+  .ingredients-section {
+    margin-bottom: 4rem;
   }
 
   .ingredients-grid {
@@ -65,60 +226,192 @@
   }
 
   .ingredient-card {
+    background-color: #f0f8fb;
+    padding: 2rem;
+    text-align: center;
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+  }
+
+  .ingredient-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .ingredient-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #4f9cba;
+  }
+
+  .ingredient-card h3 {
+    color: #4f9cba;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Featured Products Section */
+  .featured-products-section {
+    margin-bottom: 4rem;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .product-card {
     background-color: white;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 5px 20px rgba(79, 156, 186, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid rgba(79, 156, 186, 0.05);
+    transition: transform 0.3s ease;
+    position: relative;
   }
 
-  .ingredient-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 30px rgba(79, 156, 186, 0.15);
+  .product-card:hover {
+    transform: translateY(-5px);
   }
 
-  .ingredient-image {
-    height: 200px;
+  .product-image {
+    position: relative;
     overflow: hidden;
   }
 
-  .ingredient-image img {
+  .product-image img {
     width: 100%;
-    height: 100%;
+    height: 300px;
     object-fit: cover;
-    transition: transform 0.5s ease;
+    transition: transform 0.3s ease;
   }
 
-  .ingredient-card:hover .ingredient-image img {
-    transform: scale(1.05);
+  .quick-add-btn {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(79, 156, 186, 0.9);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
-  .ingredient-content {
+  .product-card:hover .quick-add-btn {
+    opacity: 1;
+  }
+
+  .product-details {
     padding: 1.5rem;
   }
 
-  .ingredient-content h3 {
-    font-family: 'Righteous', 'Comfortaa', sans-serif;
+  .product-details h3 {
     color: #4f9cba;
-    font-size: 1.4rem;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.5rem;
   }
 
-  .ingredient-content p {
-    color: #666;
-    line-height: 1.6;
+  .product-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
   }
 
-  @media (max-width: 768px) {
-    .ingredients-grid {
+  .product-price {
+    font-weight: bold;
+    color: #4f9cba;
+  }
+
+  .product-colors {
+    display: flex;
+    gap: 5px;
+  }
+
+  .color-dot {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 1px solid #e0e0e0;
+  }
+
+  .view-all-products {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .view-all-btn {
+    display: inline-block;
+    padding: 0.8rem 1.8rem;
+    background-color: #4f9cba;
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+  }
+
+  .view-all-btn:hover {
+    background-color: #3d7f9a;
+    transform: translateY(-3px);
+  }
+
+  /* Testimonials Section */
+  .testimonials-section {
+    background-color: #f0f8fb;
+    padding: 4rem 2rem;
+    border-radius: 16px;
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .testimonial-card {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(79, 156, 186, 0.1);
+  }
+
+  .testimonial-author {
+    margin-top: 1rem;
+    text-align: right;
+    color: #4f9cba;
+    font-weight: 500;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 1024px) {
+    .product-grid,
+    .ingredients-grid,
+    .testimonials-grid {
       grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hero-section h1 {
+      font-size: 2.8rem;
     }
   }
 
-  @media (max-width: 576px) {
-    .ingredients-grid {
+  @media (max-width: 768px) {
+    .product-grid,
+    .ingredients-grid,
+    .testimonials-grid {
       grid-template-columns: 1fr;
+    }
+
+    .hero-section {
+      padding: 4rem 1rem;
+    }
+
+    .hero-section h1 {
+      font-size: 2.5rem;
+    }
+
+    .hero-ctas {
+      flex-direction: column;
     }
   }
 </style>
