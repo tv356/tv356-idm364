@@ -33,11 +33,8 @@
 </script>
 
 <svelte:head>
-  <title>{data.product ? data.product.name : 'Product'} - Đê Mê Soaps</title>
+  <title>{data.product ? data.product.name : 'Product'} - Pure Essence Soaps</title>
   <meta name="description" content={data.product ? data.product.description : 'Product details'} />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Lexend:wght@300;400;500;600&family=Quicksand:wght@300;400;500;600&family=Righteous&display=swap" rel="stylesheet">
 </svelte:head>
 
 <div class="page-container">
@@ -184,7 +181,7 @@
 <footer class="footer">
   <div class="footer-content">
     <div class="footer-logo">
-      <h3>Đê Mê Soaps</h3>
+      <h3>Pure Essence Soaps</h3>
       <p>Handcrafted with love since 2018</p>
     </div>
     
@@ -196,15 +193,15 @@
     
     <div class="footer-social">
       <div class="social-icons">
-        <a href="#" aria-label="Instagram"><span class="icon">📷</span></a>
-        <a href="#" aria-label="Facebook"><span class="icon">👍</span></a>
-        <a href="#" aria-label="Pinterest"><span class="icon">📌</span></a>
+        <a href="javascript:void(0)" aria-label="Instagram"><span class="icon">📷</span></a>
+        <a href="javascript:void(0)" aria-label="Facebook"><span class="icon">👍</span></a>
+        <a href="javascript:void(0)" aria-label="Pinterest"><span class="icon">📌</span></a>
       </div>
     </div>
   </div>
   
   <div class="footer-bottom">
-    <p class="copyright">&copy; 2025 Đê Mê Soaps. All rights reserved.</p>
+    <p class="copyright">&copy; 2025 Pure Essence Soaps. All rights reserved.</p>
   </div>
 </footer>
 
@@ -215,14 +212,14 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
-    font-family: 'Quicksand', 'Ubuntu', 'Montserrat', sans-serif;
+    font-family: 'Poppins', 'Montserrat', sans-serif;
   }
   
   h1, h2, h3, h4 {
-    font-family: 'Righteous', 'Comfortaa', sans-serif;
+    font-family: 'Playfair Display', 'Poppins', sans-serif;
     color: #4f9cba;
     margin: 0 0 1rem 0;
-    letter-spacing: 0.5px;
+    letter-spacing: -0.5px;
   }
   
   h1 {
@@ -444,7 +441,7 @@
     background: none;
     border: none;
     border-bottom: 3px solid transparent;
-    font-family: 'Quicksand', 'Ubuntu', 'Montserrat', sans-serif;
+    font-family: 'Poppins', 'Montserrat', sans-serif;
     font-weight: 600;
     font-size: 1rem;
     color: #666;
@@ -553,7 +550,7 @@
 
   .footer-logo h3 {
     margin-bottom: 0.5rem;
-    font-family: 'Righteous', 'Comfortaa', sans-serif;
+    font-family: 'Playfair Display', 'Poppins', sans-serif;
     color: #4f9cba;
     font-size: 1.4rem;
     margin-top: 0;
@@ -574,9 +571,8 @@
     font-weight: 500;
     transition: color 0.3s ease;
     position: relative;
-    text-transform: uppercase;
     font-size: 0.9rem;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     text-decoration: none;
   }
   
