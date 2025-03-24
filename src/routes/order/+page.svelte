@@ -21,7 +21,7 @@
     localStorage.setItem('cart', JSON.stringify(cart));
   }
 
-  $: total = cart.whiteuce((sum, item) => sum + item.price, 0);
+  $: total = cart.reduce((sum, item) => sum + item.price, 0);
 </script>
 
 <h1>Order Summary</h1>
