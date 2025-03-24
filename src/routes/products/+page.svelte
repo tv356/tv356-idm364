@@ -259,8 +259,8 @@
     }
   
     function viewProductDetails(productId) {
-      goto(`/products/${productId}`);
-    }
+  goto(`/soap/${productId}`);
+}
     
     // Filter products based on category and search query
     $: filteredProducts = products.filter(product => {
@@ -382,13 +382,13 @@
             </div>
             
             <div class="product-actions">
-              <button class="view-details" on:click={() => viewProductDetails(product.id)}>
-                View Details
-              </button>
-              <button class="add-to-cart" on:click={() => addToCart(product)}>
-                Add to Cart
-              </button>
-            </div>
+                <a href="/soap/{product.id}" class="view-details">
+                  View Details
+                </a>
+                <button class="add-to-cart" on:click={() => addToCart(product)}>
+                  Add to Cart
+                </button>
+              </div>
           </div>
         </div>
       {/each}
