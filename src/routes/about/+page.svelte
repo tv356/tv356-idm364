@@ -11,7 +11,7 @@
 
   <div class="story-section">
     <div class="image-wrapper">
-      <img src="/api/placeholder/600/400" alt="Our workshop" />
+      <img src="https://vocsaigon.com/assets/images/nature1.png" alt="Our workshop" />
     </div>
     <div class="text-content">
       <h2>From Nature to Your Hands</h2>
@@ -71,7 +71,7 @@
         <a href="javascript:void(0)" class="cta-button">Learn More About Our Initiatives</a>
       </div>
       <div class="image-wrapper">
-        <img src="/api/placeholder/600/400" alt="Community workshop" />
+        <img src="https://vocsaigon.com/assets/images/nature1.png" alt="Community workshop" />
       </div>
     </div>
   </div>
