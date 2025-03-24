@@ -140,9 +140,9 @@
       
       <div class="footer-social">
         <div class="social-icons">
-          <a href="#" aria-label="Instagram"><span class="icon">📷</span></a>
-          <a href="#" aria-label="Facebook"><span class="icon">👍</span></a>
-          <a href="#" aria-label="Pinterest"><span class="icon">📌</span></a>
+          <a href="javascript:void(0)" aria-label="Instagram"><span class="icon">📷</span></a>
+          <a href="javascript:void(0)" aria-label="Facebook"><span class="icon">👍</span></a>
+          <a href="javascript:void(0)" aria-label="Pinterest"><span class="icon">📌</span></a>
         </div>
       </div>
     </div>
