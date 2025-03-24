@@ -33,6 +33,7 @@
     }
   }
 
+<<<<<<< HEAD
   function clearCart() {
     cart = [];
     if (browser) {
@@ -46,6 +47,9 @@
     clearCart();
     goto('/');
   }
+=======
+  $: total = cart.reduce((sum, item) => sum + item.price, 0);
+>>>>>>> 1f513258ca0e609392da10b286ee9285e21af416
 </script>
 
 <svelte:head>
