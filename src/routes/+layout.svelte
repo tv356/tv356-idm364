@@ -10,7 +10,7 @@
 </main>
 
 <footer>
-  <p>Soap page built by @Cheryl Vo</p>
+  <p>Designed and built by @Cheryl Vo</p>
 </footer>
 
 <style>
