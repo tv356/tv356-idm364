@@ -137,14 +137,6 @@
         <a href="/">Home</a>
         <a href="/about">About</a>
       </div>
-      
-      <div class="footer-social">
-        <div class="social-icons">
-          <a href="javascript:void(0)" aria-label="Instagram"><span class="icon">📷</span></a>
-          <a href="javascript:void(0)" aria-label="Facebook"><span class="icon">👍</span></a>
-          <a href="javascript:void(0)" aria-label="Pinterest"><span class="icon">📌</span></a>
-        </div>
-      </div>
     </div>
     
     <div class="footer-bottom">

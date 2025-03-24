@@ -33,7 +33,6 @@
     }
   }
 
-<<<<<<< HEAD
   function clearCart() {
     cart = [];
     if (browser) {
@@ -47,13 +46,10 @@
     clearCart();
     goto('/');
   }
-=======
-  $: total = cart.reduce((sum, item) => sum + item.price, 0);
->>>>>>> 1f513258ca0e609392da10b286ee9285e21af416
 </script>
 
 <svelte:head>
-  <title>Shopping Cart - Đê Mê Soaps</title>
+  <title>Shopping Cart - Pure Essence Soaps</title>
   <meta name="description" content="Review and complete your order of handcrafted soaps." />
 </svelte:head>
 
@@ -158,23 +154,23 @@
   }
 
   h1 {
-    font-family: 'Righteous', 'Comfortaa', sans-serif;
+    font-family: 'Playfair Display', 'Poppins', sans-serif;
     color: #4f9cba;
     font-size: 3rem;
     margin-bottom: 1rem;
-    letter-spacing: 0.5px;
+    letter-spacing: -0.5px;
   }
 
   h2 {
-    font-family: 'Righteous', 'Comfortaa', sans-serif;
+    font-family: 'Playfair Display', 'Poppins', sans-serif;
     color: #4f9cba;
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
-    letter-spacing: 0.5px;
+    letter-spacing: -0.5px;
   }
 
   h3 {
-    font-family: 'Righteous', 'Comfortaa', sans-serif;
+    font-family: 'Playfair Display', 'Poppins', sans-serif;
     color: #333;
     font-size: 1.3rem;
     margin: 0 0 0.5rem 0;
